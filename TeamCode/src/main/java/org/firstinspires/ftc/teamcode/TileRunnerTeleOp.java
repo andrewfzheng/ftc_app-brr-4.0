@@ -144,7 +144,6 @@ public class TileRunnerTeleOp extends LinearOpMode {
 
                 }
             }
-
             else {
                 isAccelReleased = true;
             }
@@ -156,6 +155,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 rrDrivePower *= 0.6;
             }
 
+            // vertical lift
             if (gamepad2.right_stick_y > 0) {
                 upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 upMotor.setPower(liftPower); //no need to readjust up or down power because using ENCODERS
@@ -164,7 +164,6 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 isPositionHolding = false;
                 currentPos = upMotor.getCurrentPosition();
             }
-
             else if (gamepad2.right_stick_y < 0) {
                 upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 upMotor.setPower(-liftPower); //negative value to move down
@@ -173,14 +172,13 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 isPositionHolding = false;
                 currentPos = upMotor.getCurrentPosition();
             }
-
             else {
                 upMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 upMotor.setTargetPosition(currentPos);
                 upMotor.setPower(liftPower);
                 isPositionHolding = true;
             }
-
+            
             //set drive power
             flDrive.setPower(flDrivePower);
             frDrive.setPower(frDrivePower);
