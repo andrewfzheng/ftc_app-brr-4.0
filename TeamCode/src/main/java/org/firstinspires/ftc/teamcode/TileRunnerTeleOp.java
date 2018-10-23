@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * Created by andrewzheng on 9/22/18.
@@ -22,7 +23,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
     DcMotor rrDrive;
 
     DcMotor intakeMotor;
-    Servo inServo;
+    CRServo inServo;
     DcMotor upMotor;
     DcMotor downMotor;
     Servo dispServo;
@@ -37,7 +38,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
         rrDrive = hardwareMap.get(DcMotor.class, "rr_drive");
 
         intakeMotor = hardwareMap.get(DcMotor.class, "in_motor");
-        inServo = hardwareMap.get(Servo.class, "in_servo");
+        inServo = hardwareMap.get(CRServo.class, "in_servo");
         upMotor = hardwareMap.get(DcMotor.class, "up_motor");
         downMotor = hardwareMap.get(DcMotor.class, "down_motor");
         dispServo = hardwareMap.get(Servo.class, "disp_servo");

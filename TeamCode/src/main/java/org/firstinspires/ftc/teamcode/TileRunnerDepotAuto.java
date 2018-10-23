@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
@@ -22,6 +23,7 @@ public class TileRunnerDepotAuto extends LinearOpMode {
     DcMotor frDrive;
     DcMotor rlDrive;
     DcMotor rrDrive;
+    CRServo inServo;
 
     double x, y, width, height, numObjects;
 
@@ -124,7 +126,7 @@ public class TileRunnerDepotAuto extends LinearOpMode {
                 sleep(400);
                 sequence += 1;
             }
-            else if (mineralPos == "left" && sequence == 1) {
+            else if (mineralPos == "right" && sequence == 1) {
                 //turn right
                 encoderDrive(.2,10,-10,10,-10);
                 sleep(400);
@@ -163,6 +165,53 @@ public class TileRunnerDepotAuto extends LinearOpMode {
                 sleep(400);
                 sequence += 1;
             }
+
+            if (sequence == 5){
+                //move forward
+                encoderDrive(1, 40, 40, 40, 40);
+                sleep(400);
+                sequence += 1;
+            }
+
+            if (sequence == 6) {
+                inServo.setPower(-1);
+            }
+
+            if (sequence == 7){
+                //move backward
+                encoderDrive(1, -40, -40, -40, -40);
+                sleep(400);
+                sequence += 1;
+            }
+
+            if (sequence == 8) {
+                //turn left
+                encoderDrive(.2, -20, 20, -20, 20);
+                sleep(400);
+                sequence += 1;
+            }
+
+            if (sequence == 9){
+                //move backward
+                encoderDrive(1, -80, -80, -80, -80);
+                sleep(400);
+                sequence += 1;
+            }
+
+            if (sequence == 10){
+                //turn right
+                encoderDrive(.2, 20, -20, 20, -20);
+                sleep(400);
+                sequence += 1;
+            }
+
+            if (sequence == 11){
+                //move backward
+                encoderDrive(1, -50, -50, -50, -50);
+                sleep(400);
+                sequence += 1;
+            }
+
             sleep(100000); //just to wait for timeout
         }
     }
