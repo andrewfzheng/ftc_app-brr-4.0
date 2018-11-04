@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 
 /**
  * Created by andrewzheng on 9/22/18.
@@ -23,10 +23,12 @@ public class TileRunnerTeleOp extends LinearOpMode {
     DcMotor rrDrive;
 
     DcMotor intakeMotor;
-    CRServo inServo;
+    Servo intakeServo;
     DcMotor upMotor;
     DcMotor downMotor;
+    DcMotor inMotor;
     Servo dispServo;
+//    DigitalChannel limitSwitch;
 
     @Override public void runOpMode(){
 
@@ -37,12 +39,12 @@ public class TileRunnerTeleOp extends LinearOpMode {
         rlDrive = hardwareMap.get(DcMotor.class, "rl_drive");
         rrDrive = hardwareMap.get(DcMotor.class, "rr_drive");
 
-        intakeMotor = hardwareMap.get(DcMotor.class, "in_motor");
-        inServo = hardwareMap.get(CRServo.class, "in_servo");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
+        intakeServo = hardwareMap.get(Servo.class, "intake_servo");
         upMotor = hardwareMap.get(DcMotor.class, "up_motor");
         downMotor = hardwareMap.get(DcMotor.class, "down_motor");
+        inMotor = hardwareMap.get(DcMotor.class, "in_motor");
         dispServo = hardwareMap.get(Servo.class, "disp_servo");
-
 
         flDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -67,18 +69,22 @@ public class TileRunnerTeleOp extends LinearOpMode {
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         upMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         downMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        inMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         downMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         upMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         downMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        inMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         upMotor.setDirection(DcMotor.Direction.FORWARD);
-        downMotor.setDirection(DcMotor.Direction.FORWARD);
+        downMotor.setDirection(DcMotor.Direction.REVERSE);
+        inMotor.setDirection(DcMotor.Direction.FORWARD);
 
         //VARIABLES FOR HARDWARE
         double flDrivePower;
@@ -91,29 +97,37 @@ public class TileRunnerTeleOp extends LinearOpMode {
         double strafe; //positive is right
         double rotate; //positive is clockwise
 
-        double intakeeMotorPower = 0.5;
-        double liftPower = 0.5;
-        int currentPos = 0;
-        boolean isPositionHolding;
+        double intakeMotorPower = 1;
+        double liftPower = 1;
+        double inMotorPower = .5;
+        int initialIntakePos = intakeMotor.getCurrentPosition();
+        int currentHPos = 0;
+        int currentHintakePos = 0;
+        int currentVUPPos = upMotor.getCurrentPosition();
+        int currentVDOWNPos = downMotor.getCurrentPosition();
+        boolean isVPositionHolding;
+        boolean isHPositionHolding;
 
         boolean isAccelReleased = false;
         boolean isAccelOn = true;
-
-
+        //boolean isCollectorExtended = false;
         
         waitForStart();
 
         while (opModeIsActive()){
+            
+            intakeMotor.setTargetPosition(initialIntakePos);
+
             //ITERATIVE CODE
             forward = gamepad1.left_stick_y;
-            strafe = gamepad1.right_stick_x;
+            //strafe = gamepad1.right_stick_x;
             rotate = gamepad1.left_stick_x;
 
-            frDrivePower = forward - strafe	+ rotate;
-            flDrivePower = forward + strafe	- rotate;
-            rrDrivePower = forward + strafe	+ rotate;
-            rlDrivePower = forward - strafe	- rotate;
-
+            frDrivePower = forward + rotate;
+            flDrivePower = forward - rotate;
+            rrDrivePower = forward + rotate;
+            rlDrivePower = forward - rotate;
+            
             //normalize mecanum drive
             maxDrivePower = Math.abs(flDrivePower);
             if (Math.abs(frDrivePower) > maxDrivePower){
@@ -157,29 +171,110 @@ public class TileRunnerTeleOp extends LinearOpMode {
             }
 
             // vertical lift
-            if (gamepad2.right_stick_y > 0) {
-                upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                upMotor.setPower(liftPower); //no need to readjust up or down power because using ENCODERS
-                downMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                downMotor.setPower(liftPower);
-                isPositionHolding = false;
-                currentPos = upMotor.getCurrentPosition();
-            }
-            else if (gamepad2.right_stick_y < 0) {
+            if (gamepad2.dpad_down == true) {
                 upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 upMotor.setPower(-liftPower); //negative value to move down
                 downMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 downMotor.setPower(-liftPower); //negative value to move down
-                isPositionHolding = false;
-                currentPos = upMotor.getCurrentPosition();
+                isVPositionHolding = false;
+                currentVUPPos = upMotor.getCurrentPosition();
+            }
+            else if (gamepad2.dpad_up == true) {
+                upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                upMotor.setPower(liftPower); //negative value to move down
+                downMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                downMotor.setPower(liftPower); //negative value to move down
+                isVPositionHolding = false;
+                currentVDOWNPos = upMotor.getCurrentPosition();
             }
             else {
                 upMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                upMotor.setTargetPosition(currentPos);
-                upMotor.setPower(liftPower);
-                isPositionHolding = true;
+                upMotor.setTargetPosition(currentVUPPos);
+                upMotor.setPower(0);
+                downMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                downMotor.setTargetPosition(currentVDOWNPos);
+                downMotor.setPower(0);
+                isVPositionHolding = true;
             }
-            
+
+            //vertical dispenser
+            if (gamepad2.x) {
+                dispServo.setPosition(0.18);
+            }
+            else if (gamepad2.y) {
+                dispServo.setPosition(0.7);
+            }
+
+            if (gamepad2.left_stick_y > 0) {
+                inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                inMotor.setPower(inMotorPower); //no need to readjust up or down power because using ENCODERS
+                isHPositionHolding = false;
+                currentHPos = inMotor.getCurrentPosition();
+            }
+            else if (gamepad2.left_stick_y < 0) {
+                inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                inMotor.setPower(-inMotorPower); //negative value to move down
+                isHPositionHolding = false;
+                currentHPos = inMotor.getCurrentPosition();
+            }
+            else {
+                inMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                inMotor.setTargetPosition(currentHPos);
+                inMotor.setPower(inMotorPower);
+                isHPositionHolding = true;
+            }
+
+            //horizontal intake flip
+            if (gamepad2.right_stick_y > 0 || gamepad2.right_stick_y < 0) {
+                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                intakeMotor.setPower(gamepad2.right_stick_y); //no need to readjust up or down power because using ENCODERS
+                isHPositionHolding = false;
+                currentHintakePos = intakeMotor.getCurrentPosition();
+            }
+//            else if (gamepad2.dpad_down) {
+//                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                intakeMotor.setPower(-intakeMotorPower); //negative value to move down
+//                isHPositionHolding = false;
+//                currentHintakePos = intakeMotor.getCurrentPosition();
+//            }
+            else {
+                intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intakeMotor.setTargetPosition(currentHintakePos);
+                intakeMotor.setPower(intakeMotorPower);
+                isHPositionHolding = true;
+            }
+
+            //horizontal intake retract
+            if (gamepad2.left_stick_y > 0 || gamepad2.left_stick_y < 0) {
+                inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                inMotor.setPower(gamepad2.left_stick_y); //no need to readjust up or down power because using ENCODERS
+                isHPositionHolding = false;
+                currentHPos = inMotor.getCurrentPosition();
+            }
+//            else if (gamepad2.left_stick_y < 0) {
+//                inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                inMotor.setPower(-intakeMotorPower); //negative value to move down
+//                isHPositionHolding = false;
+//                currentHPos = inMotor.getCurrentPosition();
+//            }
+            else {
+                inMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                inMotor.setTargetPosition(currentHPos);
+                inMotor.setPower(intakeMotorPower);
+                isHPositionHolding = true;
+            }
+
+
+            if (gamepad2.b) {
+                intakeServo.setPosition(1);
+            }
+
+            if (gamepad2.a) {
+                intakeServo.setPosition(-1);
+            }
+
+
+
             //set drive power
             flDrive.setPower(flDrivePower);
             frDrive.setPower(frDrivePower);
@@ -191,7 +286,8 @@ public class TileRunnerTeleOp extends LinearOpMode {
             telemetry.addData("frDrivePower: ", frDrivePower);
             telemetry.addData("rlDrivePower: ", rlDrivePower);
             telemetry.addData("rrDrivePower: ", rrDrivePower);
-            telemetry.addData("Lift position holding? ", isPositionHolding);
+            telemetry.addData("Vertical Lift position holding? ", isVPositionHolding);
+            telemetry.addData("Horizontal Lift position holding? ", isHPositionHolding);
             telemetry.update();
 
         }
