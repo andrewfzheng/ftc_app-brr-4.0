@@ -264,14 +264,27 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 isHPositionHolding = true;
             }
 
-
-            if (gamepad2.b) {
-                intakeServo.setPosition(1);
+            if (gamepad2.a || gamepad2.b) {
+                while (gamepad2.b) {
+                    intakeServo.setPosition(1);
+                }
+            }
+            else {
+                intakeServo.setPosition(0.5);
             }
 
-            if (gamepad2.a) {
-                intakeServo.setPosition(0);
+            if (gamepad2.a || gamepad2.b) {
+                while (gamepad2.a) {
+                    intakeServo.setPosition(0);
+                }
             }
+            else {
+                intakeServo.setPosition(0.5);
+            }
+
+
+
+
 
 
 
