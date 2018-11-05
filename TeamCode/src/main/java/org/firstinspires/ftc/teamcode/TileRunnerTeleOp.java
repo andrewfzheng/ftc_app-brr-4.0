@@ -231,12 +231,6 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 isHPositionHolding = false;
                 currentHintakePos = intakeMotor.getCurrentPosition();
             }
-//            else if (gamepad2.dpad_down) {
-//                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                intakeMotor.setPower(-intakeMotorPower); //negative value to move down
-//                isHPositionHolding = false;
-//                currentHintakePos = intakeMotor.getCurrentPosition();
-//            }
             else {
                 intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 intakeMotor.setTargetPosition(currentHintakePos);
@@ -251,12 +245,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 isHPositionHolding = false;
                 currentHPos = inMotor.getCurrentPosition();
             }
-//            else if (gamepad2.left_stick_y < 0) {
-//                inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                inMotor.setPower(-intakeMotorPower); //negative value to move down
-//                isHPositionHolding = false;
-//                currentHPos = inMotor.getCurrentPosition();
-//            }
+
             else {
                 inMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 inMotor.setTargetPosition(currentHPos);

@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 @Autonomous(name="TileRunnerDepotAuto")
 
 //@Disabled
-public class TileRunnerDepotAuto extends LinearOpMode {
+public class OldTileRunnerDepotAuto extends LinearOpMode {
 
     //HARDWARE DECLARATION
 
