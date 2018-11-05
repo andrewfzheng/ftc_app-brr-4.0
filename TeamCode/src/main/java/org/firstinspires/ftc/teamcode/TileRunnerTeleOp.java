@@ -173,17 +173,17 @@ public class TileRunnerTeleOp extends LinearOpMode {
             // vertical lift
             if (gamepad2.dpad_down == true) {
                 upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                upMotor.setPower(-liftPower); //negative value to move down
+                upMotor.setPower(-liftPower); //negative value to move up
                 downMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                downMotor.setPower(-liftPower); //negative value to move down
+                downMotor.setPower(-liftPower); //negative value to move up
                 isVPositionHolding = false;
                 currentVUPPos = upMotor.getCurrentPosition();
             }
             else if (gamepad2.dpad_up == true) {
                 upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                upMotor.setPower(liftPower); //negative value to move down
+                upMotor.setPower(liftPower); //positive value to move down
                 downMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                downMotor.setPower(liftPower); //negative value to move down
+                downMotor.setPower(liftPower); //positive value to move down
                 isVPositionHolding = false;
                 currentVDOWNPos = upMotor.getCurrentPosition();
             }
@@ -202,7 +202,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 dispServo.setPosition(0.18);
             }
             else if (gamepad2.y) {
-                dispServo.setPosition(0.7);
+                dispServo.setPosition(0.9);
             }
 
             if (gamepad2.left_stick_y > 0) {
@@ -270,7 +270,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
             }
 
             if (gamepad2.a) {
-                intakeServo.setPosition(-1);
+                intakeServo.setPosition(0);
             }
 
 
