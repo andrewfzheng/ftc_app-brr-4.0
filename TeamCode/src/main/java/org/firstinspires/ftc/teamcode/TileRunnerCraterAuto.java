@@ -54,8 +54,6 @@ public class TileRunnerCraterAuto extends LinearOpMode {
         detector.ratioScorer.weight = 5; //
         detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
 
-        detector.enable(); // Start the detector!
-
         flDrive = hardwareMap.get(DcMotor.class, "fl_drive");
         frDrive = hardwareMap.get(DcMotor.class, "fr_drive");
         rlDrive = hardwareMap.get(DcMotor.class, "rl_drive");
@@ -104,30 +102,41 @@ public class TileRunnerCraterAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            //detach robot from lander
             upMotor.setTargetPosition(currentUpPos + 100);
             downMotor.setTargetPosition(currentDownPos + 100);
             upMotor.setPower(LiftPower);
             downMotor.setPower(LiftPower);
             sleep(3000);
 
+            //start vuforia
+            detector.enable();
             pos = detector.getXPosition();
             telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
-            if (250 < pos || pos < 350) {
+
+            //check if mineral is in center position
+            if (250 < pos && pos < 350) {
+                //check if
                 //move forward
                 encoderDrive(1, 45, 45, 45, 45);
-            } else {
+            }
+            //check if mineral is in right position
+            else {
                 //turn left
                 encoderDrive(1, -20, 20, -20, 20);
-                if (250 < pos || pos < 350) {
+                if (250 < pos && pos < 350) {
                     //move forward
                     encoderDrive(1, 45, 45, 45, 45);
-                } else {
+                }
+                //go to left position
+                else {
                     //turn right
                     encoderDrive(1, 40, -40, 40, -40);
                     //move forward
                     encoderDrive(1, 45, 45, 45, 45);
                 }
             }
+            //turn off detector
             detector.disable();
         }
     }
