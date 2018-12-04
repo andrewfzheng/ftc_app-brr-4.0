@@ -4,21 +4,24 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
+/**
+ * Created by Dan Braghis on 11/12/18
+ * Edited by andrewzheng on 11/30/18.
+ */
 
 @Autonomous(name="TileRunnerDepotAuto", group="DogeCV")
 
-public class TileRunnerDepotAuto extends OpMode {
+public class TileRunnerDepotAuto extends LinearOpMode {
     // Detector object
     private GoldAlignDetector detector;
     private ElapsedTime runtime = new ElapsedTime();
     int LiftPower = 1;
-    // left = -1, center = 0, right = 1
-    int position = 0;
+    double pos = 0;
 
     DcMotor upMotor;
     DcMotor downMotor;
@@ -28,7 +31,8 @@ public class TileRunnerDepotAuto extends OpMode {
     DcMotor rrDrive;
 
     @Override
-    public void init() {
+    public void runOpMode() throws InterruptedException{
+
         telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
 
         // Set up detector
@@ -47,6 +51,8 @@ public class TileRunnerDepotAuto extends OpMode {
 
         detector.ratioScorer.weight = 5; //
         detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
+
+        detector.enable(); // Start the detector!
 
         flDrive = hardwareMap.get(DcMotor.class, "fl_drive");
         frDrive = hardwareMap.get(DcMotor.class, "fr_drive");
@@ -81,7 +87,7 @@ public class TileRunnerDepotAuto extends OpMode {
         rlDrive.setDirection(DcMotor.Direction.FORWARD);
         rrDrive.setDirection(DcMotor.Direction.REVERSE);
         upMotor.setDirection(DcMotor.Direction.FORWARD);
-        downMotor.setDirection(DcMotor.Direction.FORWARD);
+        downMotor.setDirection(DcMotor.Direction.REVERSE);
 
         int currentUpPos = upMotor.getCurrentPosition();
         int currentDownPos = downMotor.getCurrentPosition();
@@ -92,72 +98,38 @@ public class TileRunnerDepotAuto extends OpMode {
         upMotor.setPower(LiftPower);
         downMotor.setPower(LiftPower);
 
+        waitForStart();
 
-    }
+        while (opModeIsActive()) {
 
-    /*
-     * Code to run REPEATEDLY when the driver hits INIT
-     */
-    @Override
-    public void init_loop() {
+            upMotor.setTargetPosition(currentUpPos + 100);
+            downMotor.setTargetPosition(currentDownPos + 100);
+            upMotor.setPower(LiftPower);
+            downMotor.setPower(LiftPower);
+            sleep(3000);
 
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
-    @Override
-    public void start() {
-        runtime.reset();
-    }
-
-    /*
-     * Code to run REPEATEDLY when the driver hits PLAY
-     */
-    @Override
-    public void loop() {
-        while (runtime.milliseconds() < 30000) {
-            while (runtime.milliseconds() < 3000) {
-                upMotor.setPower(-1);
-                downMotor.setPower(1);
-            }
-            while (3000 < runtime.milliseconds() && runtime.milliseconds() < 6000) {
-                detector.enable(); // Start the detector!
-                if (detector.getAligned()) {
-                    position = 0;
-                }
-                else if (detector.getXPosition() < -20) {
-                    position = -1;
-                }
-                else {
-                    position = 1;
-                }
-                telemetry.addData("IsAligned", detector.getAligned()); // Is the bot aligned with the gold mineral?
-                telemetry.addData("X Pos", detector.getXPosition()); // Gold X position.
-            }
-            if (position == -1) {
-                //turn left
-                encoderDrive(1,-20,20,-20,20);
-            }
-            if (position == 0) {
+            pos = detector.getXPosition();
+            telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
+            if (250 < pos || pos < 350) {
                 //move forward
-                encoderDrive(1, 20, 20, 20, 20);
+                encoderDrive(1, 45, 45, 45, 45);
+            } else {
+                //turn left
+                encoderDrive(1, -20, 20, -20, 20);
+                if (250 < pos || pos < 350) {
+                    //move forward
+                    encoderDrive(1, 45, 45, 45, 45);
+                } else {
+                    //turn right
+                    encoderDrive(1, 40, -40, 40, -40);
+                    //move forward
+                    encoderDrive(1, 45, 45, 45, 45);
+                }
             }
-            if (position == 1) {
-                //turn right
-                encoderDrive(1,20,-20,20,-20);
-            }
+            detector.disable();
         }
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-        // Disable the detector
-        detector.disable();
-    }
 
     public void encoderDrive ( double speed, int flDrivePos, int frDrivePos, int rlDrivePos,
                                int rrDrivePos){
@@ -201,4 +173,3 @@ public class TileRunnerDepotAuto extends OpMode {
 
     }
 }
-

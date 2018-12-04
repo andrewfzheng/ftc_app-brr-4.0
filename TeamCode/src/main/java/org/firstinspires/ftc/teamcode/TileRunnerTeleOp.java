@@ -28,7 +28,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
     DcMotor downMotor;
     DcMotor inMotor;
     Servo dispServo;
-//    DigitalChannel limitSwitch;
+    //DigitalChannel limitSwitch;
 
     @Override public void runOpMode(){
 
@@ -94,7 +94,6 @@ public class TileRunnerTeleOp extends LinearOpMode {
         double maxDrivePower;
 
         double forward; //positive is forward
-        double strafe; //positive is right
         double rotate; //positive is clockwise
 
         double intakeMotorPower = 1;
@@ -190,10 +189,8 @@ public class TileRunnerTeleOp extends LinearOpMode {
             else {
                 upMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 upMotor.setTargetPosition(currentVUPPos);
-                upMotor.setPower(0);
                 downMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 downMotor.setTargetPosition(currentVDOWNPos);
-                downMotor.setPower(0);
                 isVPositionHolding = true;
             }
 
@@ -208,34 +205,29 @@ public class TileRunnerTeleOp extends LinearOpMode {
             if (gamepad2.left_stick_y > 0) {
                 inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 inMotor.setPower(inMotorPower); //no need to readjust up or down power because using ENCODERS
-                isHPositionHolding = false;
                 currentHPos = inMotor.getCurrentPosition();
             }
             else if (gamepad2.left_stick_y < 0) {
                 inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 inMotor.setPower(-inMotorPower); //negative value to move down
-                isHPositionHolding = false;
                 currentHPos = inMotor.getCurrentPosition();
             }
             else {
                 inMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 inMotor.setTargetPosition(currentHPos);
                 inMotor.setPower(inMotorPower);
-                isHPositionHolding = true;
             }
 
             //horizontal intake flip
             if (gamepad2.right_stick_y > 0 || gamepad2.right_stick_y < 0) {
                 intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 intakeMotor.setPower(gamepad2.right_stick_y); //no need to readjust up or down power because using ENCODERS
-                isHPositionHolding = false;
                 currentHintakePos = intakeMotor.getCurrentPosition();
             }
             else {
                 intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 intakeMotor.setTargetPosition(currentHintakePos);
                 intakeMotor.setPower(intakeMotorPower);
-                isHPositionHolding = true;
             }
 
             //horizontal intake retract
@@ -270,12 +262,6 @@ public class TileRunnerTeleOp extends LinearOpMode {
             else {
                 intakeServo.setPosition(0.5);
             }
-
-
-
-
-
-
 
             //set drive power
             flDrive.setPower(flDrivePower);
