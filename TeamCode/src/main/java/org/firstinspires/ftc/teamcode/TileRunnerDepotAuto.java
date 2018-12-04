@@ -117,7 +117,7 @@ public class TileRunnerDepotAuto extends LinearOpMode {
                 //move forward
                 encoderDrive(1, 45, 45, 45, 45);
             }
-            //check if mineral is in right position
+            //check if mineral is in left position
             else {
                 //turn left
                 encoderDrive(1, -20, 20, -20, 20);
@@ -125,7 +125,7 @@ public class TileRunnerDepotAuto extends LinearOpMode {
                     //move forward
                     encoderDrive(1, 45, 45, 45, 45);
                 }
-                //go to left position
+                //go to right position
                 else {
                     //turn right
                     encoderDrive(1, 40, -40, 40, -40);
