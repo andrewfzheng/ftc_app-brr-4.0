@@ -51,6 +51,7 @@ public class TileRunnerDepotAuto extends LinearOpMode {
 
         detector.ratioScorer.weight = 5; //
         detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
+        detector.enable();
 
         flDrive = hardwareMap.get(DcMotor.class, "fl_drive");
         frDrive = hardwareMap.get(DcMotor.class, "fr_drive");
@@ -100,41 +101,62 @@ public class TileRunnerDepotAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            upMotor.setTargetPosition(currentUpPos + 100);
-            downMotor.setTargetPosition(currentDownPos + 100);
-            upMotor.setPower(LiftPower);
-            downMotor.setPower(LiftPower);
+            //detach robot from lander
+//            upMotor.setTargetPosition(currentUpPos + 100);
+//            downMotor.setTargetPosition(currentDownPos + 100);
+//            upMotor.setPower(LiftPower);
+//            downMotor.setPower(LiftPower);
             sleep(3000);
 
+            //runtime.reset();
+            //move forward
+            encoderDrive(1, 8, 8, 8, 8);
+
             //start vuforia
-            detector.enable();
             pos = detector.getXPosition();
             telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
+            telemetry.update();
 
             //check if mineral is in center position
             if (250 < pos && pos < 350) {
-                //check if
                 //move forward
-                encoderDrive(1, 45, 45, 45, 45);
-            }
-            //check if mineral is in left position
-            else {
+                encoderDrive(1, 77, 77, 77, 77);
+                //place marker
+                //move backward
+                encoderDrive(1, -60, -60, -60, -60);
+                //turn left
+                encoderDrive(0.6, -41, 41, -41, 41);
+                //move forward
+                encoderDrive(1, 75, 75, 75, 75);
                 //turn left
                 encoderDrive(1, -20, 20, -20, 20);
+                //move forward
+                encoderDrive(1, 10, 10, 10, 10);
+            }
+            else {
+                //turn left
+                encoderDrive(1, -18, 18, -18, 18);
+                pos = detector.getXPosition();
+                telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
+                telemetry.update();
+                //check if mineral is in left position
                 if (250 < pos && pos < 350) {
                     //move forward
                     encoderDrive(1, 45, 45, 45, 45);
+
                 }
                 //go to right position
                 else {
                     //turn right
-                    encoderDrive(1, 40, -40, 40, -40);
+                    encoderDrive(1, 35, -35, 35, -35);
                     //move forward
                     encoderDrive(1, 45, 45, 45, 45);
+
                 }
             }
             //turn off detector
             detector.disable();
+            sleep(300000);
         }
     }
 
