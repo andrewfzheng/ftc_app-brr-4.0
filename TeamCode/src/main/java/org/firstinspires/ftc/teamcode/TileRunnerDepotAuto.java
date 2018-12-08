@@ -5,14 +5,9 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-
-/**
- * Created by Dan Braghis on 11/12/18
- * Edited by andrewzheng on 11/30/18.
- */
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="TileRunnerDepotAuto", group="DogeCV")
 
@@ -22,6 +17,7 @@ public class TileRunnerDepotAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     int LiftPower = 1;
     double pos = 0;
+    String mineralPos = "none";
 
     DcMotor upMotor;
     DcMotor downMotor;
@@ -29,6 +25,7 @@ public class TileRunnerDepotAuto extends LinearOpMode {
     DcMotor frDrive;
     DcMotor rlDrive;
     DcMotor rrDrive;
+    Servo markerArm;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -97,6 +94,8 @@ public class TileRunnerDepotAuto extends LinearOpMode {
         upMotor.setPower(LiftPower);
         downMotor.setPower(LiftPower);
 
+        markerArm.setPosition(0);
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -107,18 +106,22 @@ public class TileRunnerDepotAuto extends LinearOpMode {
 //            upMotor.setPower(LiftPower);
 //            downMotor.setPower(LiftPower);
             sleep(3000);
-
-            //runtime.reset();
             //move forward
             encoderDrive(1, 8, 8, 8, 8);
-
+            //turn left
+            encoderDrive(0.6, -9, 9, -9, 9);
             //start vuforia
             pos = detector.getXPosition();
-            telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
+            telemetry.addData("X position" , detector.getXPosition()); // Gold X position.
             telemetry.update();
-
             //check if mineral is in center position
-            if (250 < pos && pos < 350) {
+            if (290 < pos  && detector.isFound()) {
+                mineralPos = "center";
+                telemetry.addData("Mineral position", mineralPos);
+                telemetry.update();
+                detector.disable();
+                //turn right
+                encoderDrive(0.6, 9, -9, 9, -9);
                 //move forward
                 encoderDrive(1, 77, 77, 77, 77);
                 //place marker
@@ -133,33 +136,40 @@ public class TileRunnerDepotAuto extends LinearOpMode {
                 //move forward
                 encoderDrive(1, 10, 10, 10, 10);
             }
-            else {
-                //turn left
-                encoderDrive(1, -18, 18, -18, 18);
-                pos = detector.getXPosition();
-                telemetry.addData("X Pos" , detector.getXPosition()); // Gold X position.
+            // check if mineral is in left position
+            else if (pos < 290 && detector.isFound()) {
+                mineralPos = "left";
+                telemetry.addData("Mineral position", mineralPos);
                 telemetry.update();
-                //check if mineral is in left position
-                if (250 < pos && pos < 350) {
-                    //move forward
-                    encoderDrive(1, 45, 45, 45, 45);
-
-                }
-                //go to right position
-                else {
-                    //turn right
-                    encoderDrive(1, 35, -35, 35, -35);
-                    //move forward
-                    encoderDrive(1, 45, 45, 45, 45);
-
-                }
+                detector.disable();
+                //turn left
+                encoderDrive(0.6, -7, 7, -7, 7);
+                //move forward
+                encoderDrive(1, 45, 45, 45, 45);
+                //turn right
+                encoderDrive(1, 35, -35, 35, -35);
+                //move forward
+                encoderDrive(1, 45, 45, 45, 45);
+                //drop marker
+                //turn left
+                encoderDrive(1, -40, 40, -40, 40);
+                //move forward
+                encoderDrive(1, 100, 100, 100, 100);
             }
-            //turn off detector
+            //go to right position
+            else {
+            mineralPos = "right";
+            telemetry.addData("Mineral position", mineralPos);
+            telemetry.update();
             detector.disable();
+                //turn right
+                encoderDrive(1, 35, -35, 35, -35);
+                //move forward
+                encoderDrive(1, 45, 45, 45, 45);
+            }
             sleep(300000);
         }
     }
-
 
     public void encoderDrive ( double speed, int flDrivePos, int frDrivePos, int rlDrivePos,
                                int rrDrivePos){

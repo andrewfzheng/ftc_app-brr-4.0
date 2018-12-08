@@ -177,15 +177,14 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 }
             }
             else {
-                isReverseReleased = true;
-                telemetry.addData("Reverse drive:", isReverseOn);
+                isReverseReleased = false;
             }
 
             if (isReverseOn){
-                frDrivePower = forward - rotate;
-                flDrivePower = forward + rotate;
-                rrDrivePower = forward - rotate;
-                rlDrivePower = forward + rotate;
+                frDrivePower = -forward - rotate;
+                flDrivePower = -forward + rotate;
+                rrDrivePower = -forward - rotate;
+                rlDrivePower = -forward + rotate;
             }
 
             // vertical lift
@@ -221,7 +220,6 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 dispServo.setPosition(0.9);
             }
 
-            
             //horizontal intake flip
             if (gamepad2.a){
                 //CALIBRATE intakeServo.setPosition(1);
@@ -276,8 +274,8 @@ public class TileRunnerTeleOp extends LinearOpMode {
             telemetry.addData("rrDrivePower: ", rrDrivePower);
             telemetry.addData("Vertical Lift position holding? ", isVPositionHolding);
             telemetry.addData("Horizontal Lift position holding? ", isHPositionHolding);
+            telemetry.addData("Reverse drive:", isReverseOn);
             telemetry.update();
-
         }
     }
 }
