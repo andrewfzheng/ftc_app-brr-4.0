@@ -163,28 +163,8 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 rrDrivePower *= 0.6;
             }
 
-            //reverse drive mode
-            if (gamepad1.b) {
-                if (isReverseReleased) {
-                    isReverseReleased = false;
-                    if (isReverseOn){
-                        isReverseOn = false;
-                    }
-                    else{
-                        isReverseOn = true;
-                    }
-
-                }
-            }
             else {
                 isReverseReleased = false;
-            }
-
-            if (isReverseOn){
-                frDrivePower = -forward - rotate;
-                flDrivePower = -forward + rotate;
-                rrDrivePower = -forward - rotate;
-                rlDrivePower = -forward + rotate;
             }
 
             // vertical lift
@@ -274,7 +254,6 @@ public class TileRunnerTeleOp extends LinearOpMode {
             telemetry.addData("rrDrivePower: ", rrDrivePower);
             telemetry.addData("Vertical Lift position holding? ", isVPositionHolding);
             telemetry.addData("Horizontal Lift position holding? ", isHPositionHolding);
-            telemetry.addData("Reverse drive:", isReverseOn);
             telemetry.update();
         }
     }
