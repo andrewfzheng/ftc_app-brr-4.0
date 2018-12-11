@@ -1,8 +1,5 @@
 package com.disnodeteam.dogecv.filters;
 
-import android.graphics.Color;
-import android.util.Log;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -95,7 +92,8 @@ public class LeviColorFilter extends DogeCVColorFilter {
                 break;
             case YELLOW:
                 if(threshold == -1){
-                    threshold = 70;
+                    //old 70
+                    threshold = 50;
                 }
 
                 Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YUV);

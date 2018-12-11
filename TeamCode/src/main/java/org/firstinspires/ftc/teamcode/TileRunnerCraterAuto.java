@@ -26,6 +26,7 @@ public class TileRunnerCraterAuto extends LinearOpMode {
     DcMotor rlDrive;
     DcMotor rrDrive;
     Servo markerArm;
+    Servo dispServo;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -55,6 +56,7 @@ public class TileRunnerCraterAuto extends LinearOpMode {
         upMotor = hardwareMap.get(DcMotor.class, "up_motor");
         downMotor = hardwareMap.get(DcMotor.class, "down_motor");
         markerArm = hardwareMap.get(Servo.class, "marker_servo");
+        dispServo = hardwareMap.get(Servo.class, "disp_servo");
 
         flDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -94,6 +96,7 @@ public class TileRunnerCraterAuto extends LinearOpMode {
         downMotor.setPower(LiftPower);
 
         markerArm.setPosition(0.6);
+        dispServo.setPosition(0.9);
 
         waitForStart();
 
