@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -28,7 +29,8 @@ public class TileRunnerTeleOp extends LinearOpMode {
     DcMotor downMotor;
     DcMotor inMotor;
     Servo dispServo;
-    //DigitalChannel limitSwitch;
+    DigitalChannel horizontalLimit;
+    DigitalChannel verticalLimit;
 
     @Override public void runOpMode(){
 
@@ -38,13 +40,15 @@ public class TileRunnerTeleOp extends LinearOpMode {
         frDrive = hardwareMap.get(DcMotor.class, "fr_drive");
         rlDrive = hardwareMap.get(DcMotor.class, "rl_drive");
         rrDrive = hardwareMap.get(DcMotor.class, "rr_drive");
-
         intakeServo = hardwareMap.get(Servo.class, "intake_servo");
         collectorServo = hardwareMap.get(Servo.class, "collector_servo");
         upMotor = hardwareMap.get(DcMotor.class, "up_motor");
         downMotor = hardwareMap.get(DcMotor.class, "down_motor");
         inMotor = hardwareMap.get(DcMotor.class, "in_motor");
         dispServo = hardwareMap.get(Servo.class, "disp_servo");
+        horizontalLimit = hardwareMap.get(DigitalChannel.class, "horizontal_limit");
+        verticalLimit = hardwareMap.get(DigitalChannel.class, "vertical_limit");
+
 
         flDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -168,7 +172,7 @@ public class TileRunnerTeleOp extends LinearOpMode {
             }
 
             // vertical lift
-            if (gamepad2.dpad_down == true) {
+            if (gamepad2.dpad_down == true && verticalLimit.getState()) {
                 upMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 upMotor.setPower(-liftPower); //negative value to move up
                 downMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -208,13 +212,20 @@ public class TileRunnerTeleOp extends LinearOpMode {
                 //CALIBRATE intakeServo.setPosition(0);
             }
 
-            //horizontal intake retract
-            if (gamepad2.right_stick_y > 0 || gamepad2.right_stick_y < 0) {
+            //horizontal intake
+            if (gamepad2.right_stick_y > 0 && horizontalLimit.getState()) {
                 inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 inMotor.setPower(gamepad2.right_stick_y); //no need to readjust up or down power because using ENCODERS
                 isHPositionHolding = false;
                 currentHPos = inMotor.getCurrentPosition();
-            } else {
+            }
+            else if (gamepad2.right_stick_y < 0) {
+                inMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                inMotor.setPower(gamepad2.right_stick_y); //no need to readjust up or down power because using ENCODERS
+                isHPositionHolding = false;
+                currentHPos = inMotor.getCurrentPosition();
+            }
+            else {
                 inMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 inMotor.setTargetPosition(currentHPos);
                 isHPositionHolding = true;

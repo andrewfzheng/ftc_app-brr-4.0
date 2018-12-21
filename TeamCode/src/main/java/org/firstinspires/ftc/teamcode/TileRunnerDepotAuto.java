@@ -104,10 +104,10 @@ public class TileRunnerDepotAuto extends LinearOpMode {
         while (opModeIsActive()) {
 
             //detach robot from lander
-            upMotor.setTargetPosition(currentUpPos + 1500);
-            downMotor.setTargetPosition(currentDownPos + 1500);
-            upMotor.setPower(LiftPower);
-            downMotor.setPower(LiftPower);
+//            upMotor.setTargetPosition(currentUpPos + 1500);
+//            downMotor.setTargetPosition(currentDownPos + 1500);
+//            upMotor.setPower(LiftPower);
+//            downMotor.setPower(LiftPower);
             sleep(3000);
 
             //move forward

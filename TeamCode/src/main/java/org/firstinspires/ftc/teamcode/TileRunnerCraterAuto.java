@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.dogecv;
+
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -103,10 +105,10 @@ public class TileRunnerCraterAuto extends LinearOpMode {
         while (opModeIsActive()) {
 
             //detach robot from lander
-            upMotor.setTargetPosition(currentUpPos + 1500);
-            downMotor.setTargetPosition(currentDownPos + 1500);
-            upMotor.setPower(LiftPower);
-            downMotor.setPower(LiftPower);
+//            upMotor.setTargetPosition(currentUpPos + 1500);
+//            downMotor.setTargetPosition(currentDownPos + 1500);
+//            upMotor.setPower(LiftPower);
+//            downMotor.setPower(LiftPower);
             sleep(3000);
 
             //move forward
